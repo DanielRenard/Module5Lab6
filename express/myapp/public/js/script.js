@@ -3,6 +3,8 @@ class Calculator {
         this.previousOperandTextElement = previousOperandTextElement
         this.currentOperandTextElement = currentOperandTextElement
         this.clear()
+
+        this.newCalculation = true
     }
 
     clear() {
@@ -16,11 +18,16 @@ class Calculator {
     }
 
     appendNumber(number) {
+        // if (this.newCalculation) {
+        //     this.clear();
+        //     this.newCalculation = false
+        // }
         if (number === "." && this.currentOperand.includes('.')) return
         this.currentOperand = this.currentOperand.toString() + number.toString()
     }
 
     chooseOperation(operation) {
+        console.log("in chooseOperation with", operation)
         if (this.currentOperand === '') return
         if (this.previousOperand !== '') {
             this.compute()
@@ -45,7 +52,7 @@ class Calculator {
                 })
                 computation = sum
                 // console.log(prev, current)
-                console.log(sum)
+                // console.log(sum)
                 break
             case '-':
                 let difference = await fetch(`/calculator/subtract?num1=${prev}&num2=${current}`)
@@ -56,7 +63,7 @@ class Calculator {
                 })
                 computation = difference
                 // console.log(prev, current)
-                console.log(difference)
+                // console.log(difference)
                 break
             case '*':
                 let product = await fetch(`/calculator/multiply?num1=${prev}&num2=${current}`)
@@ -67,7 +74,7 @@ class Calculator {
                 })
                 computation = product
                 // console.log(prev, current)
-                console.log(product)
+                // console.log(product)
                 break
             case '÷':
                 let quotient = await fetch(`/calculator/divide?num1=${prev}&num2=${current}`)
@@ -78,7 +85,7 @@ class Calculator {
                 })
                 computation = quotient
                 // console.log(prev, current)
-                console.log(quotient)
+                // console.log(quotient)
                 break
             default:
                 return
@@ -131,6 +138,11 @@ const calculator = new Calculator(previousOperandTextElement, currentOperandText
 
 numberButtons.forEach(button => {
     button.addEventListener('click', () => {
+        //if rewrite this, make this better
+        if (calculator.newCalculation) {
+            calculator.clear();
+            calculator.newCalculation = false
+        }
         calculator.appendNumber(button.innerText)
         calculator.updateDisplay()
     })
@@ -138,6 +150,10 @@ numberButtons.forEach(button => {
 
 operationButtons.forEach(button => {
     button.addEventListener('click', () => {
+        //if rewrite this, make this better
+        if (calculator.newCalculation) {
+            calculator.newCalculation = false
+        }
         calculator.chooseOperation(button.innerText)
         calculator.updateDisplay()
     })
@@ -145,6 +161,7 @@ operationButtons.forEach(button => {
 
 equalsButton.addEventListener('click', button => {
     calculator.compute()
+    calculator.newCalculation = true
 })
 
 
